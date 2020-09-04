@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin, \
+    PermissionRequiredMixin
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -17,17 +18,17 @@ class OwnerMixin(object):
 class OwnerEditMixin(object):
     def form_valid(self, form):
         # автоматически заполняем поле owner сохраняемого объекта
-        form.instanse.owner = self.request.user
+        form.instance.owner = self.request.user
         return super(OwnerEditMixin, self).form_valid(form)
 
 
-class OwnerCourseMixin(OwnerMixin):
+class OwnerCourseMixin(LoginRequiredMixin, OwnerMixin):
     model = Course
 
 
 class OwnerCourseEditMixin(OwnerCourseMixin, OwnerEditMixin):
     fields = ['subject', 'title', 'slug', 'overview']
-    success_url = reverse_lazy('manage_course_list')
+    success_url = reverse_lazy('courses:manage_course_list')
     template_name = 'courses/manage/course/form.html'
 
 
@@ -36,18 +37,25 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
     template_name = 'courses/manage/course/list.html'
 
 
-class CourseCreateView(OwnerCourseEditMixin, CreateView):
+class CourseCreateView(PermissionRequiredMixin,
+                       OwnerCourseEditMixin,
+                       CreateView):
     """ Используем модельную форму для создания нового курса """
-    pass
+    permission_required = 'courses.add_course'
 
 
-class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
+class CourseUpdateView(PermissionRequiredMixin,
+                       OwnerCourseEditMixin,
+                       UpdateView):
     """ Редактирование курса владельцем """
-    pass
+    permission_required = 'courses.change_course'
 
 
-class CourseDeleteView(OwnerCourseMixin, DeleteView):
+class CourseDeleteView(PermissionRequiredMixin,
+                       OwnerCourseMixin,
+                       DeleteView):
     """ Удаление курса владельцем """
-    template_name = 'course/manage/course/delete.html'
-    success_url = reverse_lazy('manage_course_list')
+    template_name = 'courses/manage/course/delete.html'
+    success_url = reverse_lazy('courses:manage_course_list')
+    permission_required = 'courses.delete_course'
 
