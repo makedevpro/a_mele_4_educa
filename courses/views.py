@@ -176,3 +176,17 @@ class ContentDeleteView(View):
         content.item.delete()
         content.delete()
         return redirect('courses:module_content_list', module.id)
+
+
+class ModuleContentListView(TemplateResponseMixin, View):
+    """
+    Получает из базы данных модуль по переданному ID и генерирует для него
+    страницу подробностей
+    """
+    template_name = 'courses/manage/module/content_list.html'
+
+    def get(self, requst, module_id):
+        module = get_object_or_404(Module,
+                                   id=module_id,
+                                   course__owner=requst.user)
+        return self.render_to_response({'module': module})
