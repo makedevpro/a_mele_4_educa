@@ -1,3 +1,5 @@
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
+
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
@@ -190,3 +192,29 @@ class ModuleContentListView(TemplateResponseMixin, View):
                                    id=module_id,
                                    course__owner=requst.user)
         return self.render_to_response({'module': module})
+
+
+class ModuleOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    """
+    Обработчик, который будет получать новый порядок модулей курса
+    в формате JSON
+    """
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Module.objects.filter(id=id,
+                                  course__owner=request.user)\
+                .update(order=order)
+        return self.render_json_response({'saved': 'OK'})
+
+
+class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    """
+    Обработчик, который будет получать новый порядок содержимого модулей курса
+    в формате JSON
+    """
+    def post(self, request):
+        for id, order in self.request_json.items():
+            Content.objects.filter(id=id,
+                                   module__course__owner=request.user)\
+                .update(order=order)
+        return self.render_json_response({'status': 'OK'})
