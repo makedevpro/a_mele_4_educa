@@ -16,4 +16,13 @@ urlpatterns = [
          name='course_delete'),
     path('<pk>/module/', views.CourseModuleUpdateView.as_view(),
          name='course_module_update'),
+    path('module/<int:module_id>/content/<model_name>/create/',
+         views.ContentCreatedUpdateView.as_view(),
+         name='module_content_create'),
+    path('module/<int:module_id>/content/<model_name>/<id>/',
+         views.ContentCreatedUpdateView.as_view(),
+         name='module_content_update'),
+    path('content/<int:id>/delete/',
+         views.ContentDeleteView.as_view(),
+         name='module_content_delete'),
 ]
