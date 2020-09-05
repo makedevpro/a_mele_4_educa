@@ -3,6 +3,7 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 from django.apps import apps
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
+from django.db.models import Count
 from django.forms.models import modelform_factory
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -14,7 +15,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .forms import ModuleFormSet
-from .models import Course, Module, Content
+from .models import Course, Module, Content, Subject
 
 
 class OwnerMixin(object):
@@ -218,3 +219,36 @@ class ContentOrderView(CsrfExemptMixin, JsonRequestResponseMixin, View):
                                    module__course__owner=request.user)\
                 .update(order=order)
         return self.render_json_response({'status': 'OK'})
+
+
+class CourseListView(TemplateResponseMixin, View):
+    """
+    Получение списка курсов
+    """
+    model = Course
+    template_name = 'courses/course/list.html'
+
+    def get(self, request, subject=None):
+        # количество курсов по кажому предмету
+        subjects = Subject.objects.annotate(
+            total_courses=Count('courses'))
+        # количество модулей в каждом курсе
+        courses = Course.objects.annotate(total_modules=Count('modules'))
+        if subject:
+            subject = get_object_or_404(Subject, slug=subject)
+            courses = courses.filter(subject=subject)
+        return self.render_to_response({'subjects': subjects,
+                                        'subject': subject,
+                                        'courses': courses})
+
+
+class CourseDetailView(DeleteView):
+    """
+    Страница курса
+
+    DetailView - При обработке запроса Django ожидает, что в URL будет передан
+    идентификатор (pk) объекта, по которому можно его получить
+
+    """
+    model = Course
+    template_name = 'courses/course/detail.html'
