@@ -238,6 +238,7 @@ class CourseListView(TemplateResponseMixin, View):
             cache.set('all_subjects', subjects)
         # количество модулей в каждом курсе
         all_courses = Course.objects.annotate(total_modules=Count('modules'))
+        courses = all_courses # FIX local variable 'courses' referenced before assignment
         if subject:
             subject = get_object_or_404(Subject, slug=subject)
             key = 'subject_{}_courses'.format(subject.id)
