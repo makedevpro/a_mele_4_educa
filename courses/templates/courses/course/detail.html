@@ -19,7 +19,7 @@
             <form action="{% url 'students:student_enroll_course' %}" method="post">
                 {{ enroll_form }}
                 {% csrf_token %}
-                <input type="submit" value="Entoll now" class="button">
+                <input type="submit" value="Enroll now" class="button">
             </form>
         {% else %}
             <a href="{% url 'students:student_registration' %}" class="button">
