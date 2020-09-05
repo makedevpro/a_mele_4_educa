@@ -2,6 +2,9 @@ from django.contrib import admin
 
 from .models import Subject, Course, Module
 
+# Добавляем строку статуса мемкеша в админку
+admin.site.index_template = 'memcache_status/admin_index.html'
+
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
