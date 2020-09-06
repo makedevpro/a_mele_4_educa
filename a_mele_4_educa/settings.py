@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'embed_video',
     'memcache_status',
+    'rest_framework',
 
     'students.apps.StudentsConfig',
 ]
@@ -52,9 +53,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -145,6 +146,17 @@ CACHES = {
     }
 }
 
-CACHE_MIDDLEWARE_ALIAS = 'default'
-CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes
-CACHE_MIDDLEWARE_KEY_PREFIX = 'educa'
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_SECONDS = 60 * 15  # 15 minutes
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'educa'
+
+
+REST_FRAMEWORK = {
+    # разрешения по умолчанию для доступа к чтению, созданию,
+    # изменению и удалению объектов
+    'DEFAULT_PERMISSION_CLASSES': [
+        # анонимные пользователи смогут только просматривать, но не изменять
+        # данные, а авторизованные будут иметь доступ ко всем четырем действиям.
+        'rest_framework.permissions.DjangoModelPermissionsOrAnnonReadOnly',
+    ]
+}
