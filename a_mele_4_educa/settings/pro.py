@@ -16,3 +16,8 @@ DATABASES = {
         'PASSWORD': '',
     }
 }
+
+#любой HTTP-запрос будет перенаправлен на HTTPS
+SECURE_SSL_REDIRECT = True
+# при работе с куками и CSRF-токенами будет учитываться SSL
+CSRF_COOKIE_SECURE = True
