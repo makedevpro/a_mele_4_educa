@@ -157,6 +157,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         # анонимные пользователи смогут только просматривать, но не изменять
         # данные, а авторизованные будут иметь доступ ко всем четырем действиям.
-        'rest_framework.permissions.DjangoModelPermissionsOrAnnonReadOnly',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ]
 }
