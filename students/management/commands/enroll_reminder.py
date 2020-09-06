@@ -8,6 +8,14 @@ from django.db.models import Count
 
 
 class Command(BaseCommand):
+    """
+    For use in views and other functions:
+
+    from django.core import management
+    management.call_command('enroll_reminder', days=20)
+
+    """
+
     help = 'Sends an e-mail reminder to users registered more ' \
            'than N days that are not enrolled into any courses yet'
 
